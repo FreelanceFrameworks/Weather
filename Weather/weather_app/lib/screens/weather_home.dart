@@ -20,10 +20,8 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
 
     try {
       final data = await WeatherAPI.fetchWeather(_cityController.text);
-      setState(() {
-        _weatherInfo =
-            "${data.city}, ${data.country}\nTemp: ${data.temp}°C\nHumidity: ${data.humidity}%\n${data.description}";
-      });
+      setState(() => _weatherInfo =
+            "${data.city}, ${data.country}\nTemp: ${data.temp}°C\nHumidity: ${data.humidity}%\n${data.description}");
     } catch (e) {
       setState(() => _weatherInfo = "Error: $e");
     } finally {

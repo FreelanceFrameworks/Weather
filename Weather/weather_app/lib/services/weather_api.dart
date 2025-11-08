@@ -1,28 +1,19 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import '../models/weather_model.dart';
-import '../utils/constraints.dart';
 
-class WeatherAPI {
-  static Future<WeatherModel> fetchWeather(String city) async {
-    // 1️⃣ Get city coordinates
-    final cityUrl =
-        'https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$apiKey';
-    final cityRes = await http.get(Uri.parse(cityUrl));
-    if (cityRes.statusCode != 200) throw Exception("City not found");
+class WeatherApi {
+  final String apiKey = dotenv.env['API_KEY'] ?? '';
+  final String baseUrl = dotenv.env['API_URL'] ?? '';
 
-    final cityData = jsonDecode(cityRes.body);
-    final lat = cityData['coord']['lat'];
-    final lon = cityData['coord']['lon'];
+  Future<Map<String, dynamic>> fetchWeather(String city) async {
+    final url = Uri.parse('$baseUrl/weather?q=$city&appid=$apiKey&units=metric');
+    final response = await http.get(url);
 
-    // 2️⃣ Get One Call API weather details
-    final oneCallUrl =
-        'https://api.openweathermap.org/data/3.0/onecall?lat=$lat&lon=$lon&units=metric&appid=$apiKey';
-    final forecastRes = await http.get(Uri.parse(oneCallUrl));
-    if (forecastRes.statusCode != 200) throw Exception("Weather data not found");
-
-    final forecastData = jsonDecode(forecastRes.body);
-
-    return WeatherModel.fromJson(cityData, forecastData);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to fetch weather: ${response.statusCode}');
+    }
   }
 }
