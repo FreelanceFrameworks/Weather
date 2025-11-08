@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/weather_model.dart';
-import "../utils/constraints.dart";
+import '../utils/constraints.dart';
 
 class WeatherAPI {
   static Future<WeatherModel> fetchWeather(String city) async {
